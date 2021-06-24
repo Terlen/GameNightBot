@@ -33,7 +33,7 @@ def dbCreatePlayersTable(con,cur):
 
 def dbAddGameRecord(game, user):
     con,cur = dbConnect()
-    record = (datetime.today().strftime("%Y-%m-%d %h-%m-%s"),game,user)
+    record = (datetime.datetime.now().isoformat(),game,user)
     cur.execute(
         "INSERT INTO games (date_played, game_name, chosen_by) VALUES (?, ?, ?)", record
     )
