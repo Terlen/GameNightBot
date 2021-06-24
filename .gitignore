@@ -2,3 +2,4 @@
 .env
 nextChoice
 __pycache__
+*.db
