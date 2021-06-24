@@ -5,6 +5,7 @@ from discord.ext import commands, tasks
 from discord.utils import get
 
 import records
+import gameHistory
 
 from dotenv import load_dotenv
 
@@ -65,6 +66,14 @@ async def setTurn(ctx):
     else:
         await ctx.send("Invalid command input, please use format \"!setTurn <@usermention>\" OR just use \"!setTurn\" (For example: !setTurn @Terlen OR !setTurn to set yourself)")
 
+@bot.command()
+async def addPlayedGame(ctx):
+    commandText = ctx.message.content.split()
+    if len(commandText) == 3:
+        gameHistory.dbAddGameRecord(commandText[1],ctx.message.mentions[0].id)
+        await ctx.send(f"Alright, {commandText[1]} was added to our play history! Hope it was a good choice {ctx.message.mentions[0].name}!")
+    else:
+        await ctx.send(f"Invalid command")
     
 
 
