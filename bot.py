@@ -69,17 +69,23 @@ async def setTurn(ctx):
 @bot.command()
 async def addPlayedGame(ctx):
     commandText = ctx.message.content.split()
+    if len(commandText) > 3:
+        commandText = ctx.message.content.split("\"")
+        if len(commandText) == 3:
+            gameHistory.dbAddGameRecord(commandText[1],ctx.message.mentions[0].id)
+        else:
+            await ctx.send(f"Invalid command. Make sure you're quoting if there are spaces in the name! (For example: \"The Game of Life\")")
     if len(commandText) == 3:
         gameHistory.dbAddGameRecord(commandText[1],ctx.message.mentions[0].id)
         await ctx.send(f"Alright, {commandText[1]} was added to our play history! Hope it was a good choice {ctx.message.mentions[0].name}!")
     else:
-        await ctx.send(f"Invalid command")
+        await ctx.send(f"Invalid command. Make sure you're quoting if there are spaces in the name! (For example: \"The Game of Life\")")
     
 @bot.command()
 async def addPlayer(ctx):
     commandText = ctx.message.content.split()
     if len(commandText) == 2:
         gameHistory.dbAddPlayerRecord(ctx.message.mentions[0].id, ctx.message.mentions[0].name)
-        await ctx.send(f"Alright, player {ctx.message.mentions[0].name} has been recorded as a player!")
+        await ctx.send(f"Alright, player {ctx.message.mentions[0].name} has been recorded!")
 
 bot.run(TOKEN)
