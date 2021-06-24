@@ -4,6 +4,8 @@ import discord
 from discord.ext import commands, tasks
 from discord.utils import get
 
+import records
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,6 +21,7 @@ bot = commands.Bot(command_prefix = '!', intents=intents)
 
 #print(TOKEN)
 #client = discord.Client(intents=intents)
+
 
 @bot.event
 async def on_ready():
@@ -41,7 +44,21 @@ async def turn(ctx):
 
 @bot.command()
 async def setTurn(ctx):
-    text = ctx.message.content
+    nextDate = records.nextGameNight()
+    textPhrases = ctx.message.content.split()
+    if len(textPhrases) == 1:
+        records.saveNextChoice(ctx.author.id, nextDate)
+        await ctx.send(f'Alright, you\'re picking the game next time {ctx.author.name}! The next game night is {nextDate}.')
+    elif len(textPhrases) == 2:
+        try:
+            user = ctx.message.mentions[0]
+            records.saveNextChoice(user.id, nextDate)
+            await ctx.send(f'Looks like {user.name}\'s picking next time! The next game night is {nextDate}.')
+        except:
+            await ctx.send("Invalid command input")
+    else:
+        await ctx.send("Invalid command input, please use format \"!setTurn <@usermention>\" OR just use \"!setTurn\" (For example: !setTurn @Terlen OR !setTurn to set yourself)")
+
     
 
 
