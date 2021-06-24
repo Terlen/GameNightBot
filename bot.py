@@ -26,7 +26,7 @@ bot = commands.Bot(command_prefix = '!', intents=intents)
 @bot.event
 async def on_ready():
     print(bot.guilds)
-    print(GUILD)
+    #print(GUILD)
     guild = discord.utils.get(bot.guilds, id=GUILD)
     print(guild)
     print(
@@ -38,9 +38,15 @@ async def on_ready():
     #print(members)
     print(f'Guild Members:\n - {members}')
 
+# Define command to have bot fetch the user who is picking the next game and the date they are picking for.
 @bot.command()
-async def turn(ctx):
-    await ctx.send("Hello!")
+async def whosnext(ctx):
+    nextMemberData = records.loadNextChoice()
+    memberID = nextMemberData[0]
+    nextDate = nextMemberData[1]
+    guild = discord.utils.get(bot.guilds, id=GUILD)
+    nextMember = discord.utils.get(guild.members, id=memberID)
+    await ctx.send(f"The person choosing the next game is {nextMember.display_name}! We'll be playing their game on {nextDate}.")
 
 @bot.command()
 async def setTurn(ctx):
