@@ -40,7 +40,7 @@ async def on_ready():
 
 # Define command to have bot fetch the user who is picking the next game and the date they are picking for.
 @bot.command()
-async def next(ctx):
+async def whosnext(ctx):
     nextMemberData = records.loadNextChoice()
     memberID = nextMemberData[0]
     nextDate = nextMemberData[1]
