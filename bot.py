@@ -26,18 +26,18 @@ bot = commands.Bot(command_prefix = '!', intents=intents)
 
 @bot.event
 async def on_ready():
-    print(bot.guilds)
+    #print(bot.guilds)
     #print(GUILD)
-    guild = discord.utils.get(bot.guilds, id=GUILD)
-    print(guild)
+    #guild = discord.utils.get(bot.guilds, id=GUILD)
+    #print(guild)
     print(
-        f'{bot.user} has connected to the Discord guild:\n'
-        f'{guild.name}(id: {guild.id})'
+        f'{bot.user} has connected to the Discord guilds:\n'
+        f'{bot.guilds}'
         )
     
-    members = '\n - '.join([member.name for member in guild.members])
+    #members = '\n - '.join([member.name for member in guild.members])
     #print(members)
-    print(f'Guild Members:\n - {members}')
+    #print(f'Guild Members:\n - {members}')
 
 # Define command to have bot fetch the user who is picking the next game and the date they are picking for.
 @bot.command()
