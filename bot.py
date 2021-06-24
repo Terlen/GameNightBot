@@ -75,6 +75,11 @@ async def addPlayedGame(ctx):
     else:
         await ctx.send(f"Invalid command")
     
-
+@bot.command()
+async def addPlayer(ctx):
+    commandText = ctx.message.content.split()
+    if len(commandText) == 2:
+        gameHistory.dbAddPlayerRecord(ctx.message.mentions[0].id, ctx.message.mentions[0].name)
+        await ctx.send(f"Alright, player {ctx.message.mentions[0].name} has been recorded as a player!")
 
 bot.run(TOKEN)
