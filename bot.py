@@ -48,12 +48,12 @@ async def whosnext(ctx):
     guild = discord.utils.get(bot.guilds, id=GUILD)
     nextMember = discord.utils.get(guild.members, id=memberID)
     await ctx.send(f"The person choosing the next game is {nextMember.display_name}! We'll be playing their game on {nextDate}.")
-
+    
 @bot.command()
 async def setTurn(ctx):
     nextDate = records.nextGameNight()
     textPhrases = ctx.message.content.split()
-    if len(textPhrases) == 1:
+    if len(textPhrases) == 1:   
         records.saveNextChoice(ctx.author.id, nextDate)
         await ctx.send(f'Alright, you\'re picking the game next time {ctx.author.name}! The next game night is {nextDate}.')
     elif len(textPhrases) == 2:
@@ -83,5 +83,10 @@ async def addPlayer(ctx):
     if len(commandText) == 2:
         gameHistory.dbAddPlayerRecord(ctx.message.mentions[0].id, ctx.message.mentions[0].name)
         await ctx.send(f"Alright, player {ctx.message.mentions[0].name} has been recorded!")
+
+@bot.command()
+async def mercy(ctx):
+    commandText = ctx.message.content.split()
+    await ctx.send(f"I am not a merciful god, but this indiscretion shall be allowed.")
 
 bot.run(TOKEN)
