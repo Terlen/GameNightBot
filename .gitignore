@@ -1,5 +1,5 @@
 .venv
 .env
-nextChoice
+nextChoice*
 __pycache__
 *.db
