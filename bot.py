@@ -5,6 +5,7 @@ from discord.ext import commands, tasks
 from discord.utils import get
 
 import records
+import gameHistory
 
 from dotenv import load_dotenv
 
@@ -25,18 +26,18 @@ bot = commands.Bot(command_prefix = '!', intents=intents)
 
 @bot.event
 async def on_ready():
-    print(bot.guilds)
+    #print(bot.guilds)
     #print(GUILD)
-    guild = discord.utils.get(bot.guilds, id=GUILD)
-    print(guild)
+    #guild = discord.utils.get(bot.guilds, id=GUILD)
+    #print(guild)
     print(
-        f'{bot.user} has connected to the Discord guild:\n'
-        f'{guild.name}(id: {guild.id})'
+        f'{bot.user} has connected to the Discord guilds:\n'
+        f'{bot.guilds}'
         )
     
-    members = '\n - '.join([member.name for member in guild.members])
+    #members = '\n - '.join([member.name for member in guild.members])
     #print(members)
-    print(f'Guild Members:\n - {members}')
+    #print(f'Guild Members:\n - {members}')
 
 # Define command to have bot fetch the user who is picking the next game and the date they are picking for.
 @bot.command()
@@ -47,12 +48,12 @@ async def whosnext(ctx):
     guild = discord.utils.get(bot.guilds, id=GUILD)
     nextMember = discord.utils.get(guild.members, id=memberID)
     await ctx.send(f"The person choosing the next game is {nextMember.display_name}! We'll be playing their game on {nextDate}.")
-
+    
 @bot.command()
 async def setTurn(ctx):
     nextDate = records.nextGameNight()
     textPhrases = ctx.message.content.split()
-    if len(textPhrases) == 1:
+    if len(textPhrases) == 1:   
         records.saveNextChoice(ctx.author.id, nextDate)
         await ctx.send(f'Alright, you\'re picking the game next time {ctx.author.name}! The next game night is {nextDate}.')
     elif len(textPhrases) == 2:
@@ -65,7 +66,27 @@ async def setTurn(ctx):
     else:
         await ctx.send("Invalid command input, please use format \"!setTurn <@usermention>\" OR just use \"!setTurn\" (For example: !setTurn @Terlen OR !setTurn to set yourself)")
 
+@bot.command()
+async def addGame(ctx):
+    commandText = ctx.message.content.split()
+    if len(commandText) > 3:
+        commandText = ctx.message.content.split("\"")
+    if len(commandText) == 3:
+        gameHistory.dbAddGameRecord(commandText[1],ctx.message.mentions[0].id)
+        await ctx.send(f"Alright, {commandText[1]} was added to our play history! Hope it was a good choice {ctx.message.mentions[0].name}!")
+    else:
+        await ctx.send(f"Invalid command. Make sure you're quoting if there are spaces in the name! (For example: \"The Game of Life\")")
     
+@bot.command()
+async def addPlayer(ctx):
+    commandText = ctx.message.content.split()
+    if len(commandText) == 2:
+        gameHistory.dbAddPlayerRecord(ctx.message.mentions[0].id, ctx.message.mentions[0].name)
+        await ctx.send(f"Alright, player {ctx.message.mentions[0].name} has been recorded!")
 
+@bot.command()
+async def mercy(ctx):
+    commandText = ctx.message.content.split()
+    await ctx.send(f"I am not a merciful god, but this indiscretion shall be allowed.")
 
 bot.run(TOKEN)
