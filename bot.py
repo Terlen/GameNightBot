@@ -6,6 +6,7 @@ from discord.utils import get
 
 import records
 import gameHistory
+import reactionHandler as react
 
 from dotenv import load_dotenv
 
