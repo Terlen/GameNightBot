@@ -39,6 +39,15 @@ async def on_ready():
     #print(members)
     #print(f'Guild Members:\n - {members}')
 
+@bot.event
+async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
+    if (payload.user_id != bot.user.id):
+        pass
+        reactionGuild = discord.utils.get(bot.guilds, id=payload.guild_id)
+        reactionChannel = discord.utils.get(reactionGuild.text_channels, id=payload.channel_id)
+        reactionMessage = await reactionChannel.fetch_message(payload.message_id)
+        await reactionChannel.send(f"Wow, you used the {payload.emoji.name} emoji huh?")
+
 # Define command to have bot fetch the user who is picking the next game and the date they are picking for.
 @bot.command()
 async def whosnext(ctx):
