@@ -6,6 +6,7 @@ from discord.utils import get
 
 import records
 import gameHistory
+import messages
 
 from dotenv import load_dotenv
 
@@ -72,7 +73,9 @@ async def addGame(ctx):
     if len(commandText) > 3:
         commandText = ctx.message.content.split("\"")
     if len(commandText) == 3:
-        gameHistory.dbAddGameRecord(commandText[1],ctx.message.mentions[0].id)
+        # Order bot to create a verification message
+        await messages.verifyMessage(ctx,operation="add",game=commandText[1])
+        #gameHistory.dbAddGameRecord(commandText[1],ctx.message.mentions[0].id)
         await ctx.send(f"Alright, {commandText[1]} was added to our play history! Hope it was a good choice {ctx.message.mentions[0].name}!")
     else:
         await ctx.send(f"Invalid command. Make sure you're quoting if there are spaces in the name! (For example: \"The Game of Life\")")
