@@ -4,7 +4,7 @@ import discord
 from discord.utils import get
 
 # Send verification message to reiterate task being done
-async def verifyMessage(context: 'discord.ext.commands.Context' , game: 'string', operation: 'string'):
+async def verifyMessage(context: discord.ext.commands.Context , game: str, operation: str):
     if operation == "add":
         response = await context.send(f"{game} will be added to the list of played games, is that correct?")
         await addConfirmEmoji(response)
