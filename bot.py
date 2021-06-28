@@ -44,14 +44,18 @@ async def on_ready():
 # listen for reactions being added to bot messages and handle the event
 @bot.event
 async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
+    # Ignore bot generated reactions
     if (payload.user_id != bot.user.id):
-        pass
+        #pass
         reactionGuild = discord.utils.get(bot.guilds, id=payload.guild_id)
         reactionChannel = discord.utils.get(reactionGuild.text_channels, id=payload.channel_id)
         reactionMessage = await reactionChannel.fetch_message(payload.message_id)
+        # Respond to reactions to bot messages
         if reactionMessage.author.id == bot.user.id:
+            # Red X or Green Check emojis used by bot verification messages
             if payload.emoji.name == '\u274c' or payload.emoji.name == '\u2705':
                 # verification logic/function
+
                 pass
 
 # Define command to have bot fetch the user who is picking the next game and the date they are picking for.
@@ -89,10 +93,12 @@ async def addGame(ctx):
     if len(commandText) == 3:
         # Order bot to create a verification message
         await messages.verifyMessage(ctx,operation="add",game=commandText[1])
-        #gameHistory.dbAddGameRecord(commandText[1],ctx.message.mentions[0].id)
-        await ctx.send(f"Alright, {commandText[1]} was added to our play history! Hope it was a good choice {ctx.message.mentions[0].name}!")
     else:
         await ctx.send(f"Invalid command. Make sure you're quoting if there are spaces in the name! (For example: \"The Game of Life\")")
+
+#async def addGameVerified(ctx):
+#    #gameHistory.dbAddGameRecord(commandText[1],ctx.message.mentions[0].id)
+#    await ctx.send(f"Alright, {commandText[1]} was added to our play history! Hope it was a good choice {ctx.message.mentions[0].name}!")
     
 @bot.command()
 async def addPlayer(ctx):
