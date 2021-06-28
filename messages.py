@@ -2,12 +2,18 @@
 
 import discord
 from discord.utils import get
+#from collections import defaultdict
+
+pendingVerify = {}
 
 # Send verification message to reiterate task being done
-async def verifyMessage(context: discord.ext.commands.Context , game: str, operation: str):
+async def verifyMessage(context: 'Verification', game: str, operation: str):
     if operation == "add":
-        response = await context.send(f"{game} will be added to the list of played games, is that correct?")
-        await addConfirmEmoji(response)
+        context.verifyMessage = await context.commandRequest.send(f"{game} will be added to the list of played games, is that correct?")
+    
+    pendingVerify[context.commandRequest.guild.id].append(context)
+    await addConfirmEmoji(context.verifyMessage)
+
 
 
 # Add yes/no option to message via emoji reaction
@@ -16,4 +22,5 @@ async def addConfirmEmoji(verificationMessage: 'discord.Message') -> None:
     await verificationMessage.add_reaction('\u274C')
     # Post "Yes" reaction (white heave check mark emoji)
     await verificationMessage.add_reaction('\u2705')
+    
 
