@@ -74,8 +74,7 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
                         # verification logic/function
                         #await reactionMessage.channel.send("Yay!")
                         await addGameVerified(reactionMessage.channel,item.game, item.suggestor.name)
-
-                pass
+                    break
 
 # Define command to have bot fetch the user who is picking the next game and the date they are picking for.
 @bot.command()
