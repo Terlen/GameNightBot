@@ -3,3 +3,4 @@
 nextChoice*
 __pycache__
 *.db
+.vscode/
