@@ -6,8 +6,16 @@ from discord.utils import get
 
 pendingVerify = {}
 
+class Verification:
+    def __init__(self, ctx):
+        self.user = ctx.author.id
+        self.commandRequest = ctx
+        self.guild = ctx.guild
+        self.channel = ctx.channel
+        self.verified = False
+
 # Send verification message to reiterate task being done
-async def verifyMessage(context: 'Verification', game: str, operation: str):
+async def verifyMessage(context: Verification, game: str, operation: str):
     if operation == "add":
         context.verifyMessage = await context.commandRequest.send(f"{game} will be added to the list of played games, is that correct?")
     

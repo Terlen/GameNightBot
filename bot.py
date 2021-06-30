@@ -7,7 +7,7 @@ from discord.utils import get
 import data.records as records
 import data.gameHistory as gameHistory
 import utils.reactionHandler as react
-import utils.messages as messages
+from utils.messages import verifyMessage, pendingVerify, Verification
 
 from dotenv import load_dotenv
 
@@ -26,13 +26,7 @@ bot = commands.Bot(command_prefix = '!', intents=intents)
 #client = discord.Client(intents=intents)
 
 
-class Verification:
-    def __init__(self, ctx):
-        self.user = ctx.author.id
-        self.commandRequest = ctx
-        self.guild = ctx.guild
-        self.channel = ctx.channel
-        self.verified = False
+
 
 
 @bot.event
@@ -48,7 +42,7 @@ async def on_ready():
     
 
     for guild in bot.guilds:
-        messages.pendingVerify[guild.id] = []
+        pendingVerify[guild.id] = []
     #members = '\n - '.join([member.name for member in guild.members])
     #print(members)
     #print(f'Guild Members:\n - {members}')
@@ -65,7 +59,7 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
         # Respond to reactions to bot messages
         if reactionMessage.author.id == bot.user.id:
             
-            for item in messages.pendingVerify[reactionGuild.id]:
+            for item in pendingVerify[reactionGuild.id]:
                 if payload.user_id == item.commandRequest.author.id and reactionMessage == item.verifyMessage:
                     # Red X or Green Check emojis used by bot verification messages
                     if payload.emoji.name == '\u274c':
@@ -113,7 +107,7 @@ async def addGame(ctx):
         addRequest = Verification(ctx)
         addRequest.game = commandText[1]
         addRequest.suggestor = ctx.message.mentions[0]
-        await messages.verifyMessage(addRequest,operation="add",game=addRequest.game)
+        await verifyMessage(addRequest,operation="add",game=addRequest.game)
     else:
         await ctx.send(f"Invalid command. Make sure you're quoting if there are spaces in the name! (For example: \"The Game of Life\")")
 
