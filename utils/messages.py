@@ -2,13 +2,12 @@
 
 import discord
 from discord.utils import get
-from bot import Verification
 #from collections import defaultdict
 
 pendingVerify = {}
 
 # Send verification message to reiterate task being done
-async def verifyMessage(context: Verification, game: str, operation: str):
+async def verifyMessage(context: 'Verification', game: str, operation: str):
     if operation == "add":
         context.verifyMessage = await context.commandRequest.send(f"{game} will be added to the list of played games, is that correct?")
     
