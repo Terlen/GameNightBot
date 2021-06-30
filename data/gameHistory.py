@@ -2,7 +2,7 @@ import sqlite3
 import datetime
 
 def dbConnect():
-    connection = sqlite3.connect('gameNight.db')
+    connection = sqlite3.connect('data/gameNight.db')
     cur = connection.cursor()
     return connection,cur
 

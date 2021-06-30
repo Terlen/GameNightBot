@@ -4,10 +4,10 @@ import discord
 from discord.ext import commands, tasks
 from discord.utils import get
 
-import records
-import gameHistory
-import reactionHandler as react
-import messages
+import data.records as records
+import data.gameHistory as gameHistory
+import utils.reactionHandler as react
+import utils.messages as messages
 
 from dotenv import load_dotenv
 
