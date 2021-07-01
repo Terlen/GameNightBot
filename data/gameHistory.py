@@ -1,10 +1,22 @@
 import sqlite3
 import datetime
 
-def dbConnect():
-    connection = sqlite3.connect('data/gameNight.db')
-    cur = connection.cursor()
-    return connection,cur
+def exception_handler(function):
+    def handler(*args, **kwargs):
+        try:
+            return function(*args, **kwargs)
+        except (sqlite3.OperationalError, TypeError, sqlite3.DatabaseError, sqlite3.IntegrityError, sqlite3.ProgrammingError, sqlite3.NotSupportedError) as err:
+            return err
+    return handler
+
+
+@exception_handler
+def dbConnect(database: str ='data/gameNight.db'):
+    connection = sqlite3.connect(database)
+    return connection
+
+def getCursor(connection):
+    return connection.cursor()
 
 def dbCreateGameTable(con,cur):
 # Build game history table
