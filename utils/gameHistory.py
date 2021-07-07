@@ -1,3 +1,5 @@
+from typing import List, Dict
+from discord import Guild
 import sqlite3
 import datetime
 
@@ -11,9 +13,8 @@ import datetime
 #, TypeError, sqlite3.DatabaseError, sqlite3.IntegrityError, sqlite3.ProgrammingError, sqlite3.NotSupportedError) as err:
 
 #@exception_handler
-def dbConnect(guildList: list) -> dict:
+def dbConnect(guildList: List[Guild]) -> Dict[int, sqlite3.Connection]:
     connections = {guild.id: sqlite3.connect("data/"+str(guild.id)+".db") for guild in guildList}
-
     #for guild in guildList:
     #connection = sqlite3.connect(str())
     return connections
