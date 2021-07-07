@@ -14,13 +14,13 @@ GameNightBot utilizes a SQLite3 database to store data on players, games, and ga
 
 * Have we really never played Catan?
 
-![](img\gameHistory.png)
+![Adding a game to the played games database](img/gameHistory.png)
 
 ### Scheduling
 
 GameNightBot provides scheduling tools to ensure nobody ever misses a game night again! Automated reminders and game master rotations provide all players with the information they need to come to each night prepared to play.
 
-![](img\setTurn.png)
+![Scheduling the next game night date and setting the game master](img/setTurn.png)
 
 ### Intuitive Emoji Input
 
