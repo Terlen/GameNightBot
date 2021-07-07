@@ -48,14 +48,11 @@ def dbCreatePlayersTable(con,cur):
     )
     con.commit()
 
-def dbAddGameRecord(game, user):
-    con,cur = dbConnect()
+def addGame(cursor,game, user):
     record = (datetime.datetime.now().isoformat(),game,user)
-    cur.execute(
+    cursor.execute(
         "INSERT INTO games (date_played, game_name, chosen_by) VALUES (?, ?, ?)", record
     )
-    con.commit()
-    con.close()
 
 def dbAddPlayerRecord(userid,name):
     con,cur = dbConnect()
