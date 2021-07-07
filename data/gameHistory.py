@@ -11,11 +11,12 @@ def exception_handler(function):
 
 
 @exception_handler
-def dbConnect(database: str ='data/gameNight.db'):
+def dbConnect(database: str ='data/gameNight.db') -> sqlite3.Connection:
     connection = sqlite3.connect(database)
     return connection
 
-def getCursor(connection):
+@exception_handler
+def getCursor(connection: sqlite3.Connection) -> sqlite3.Cursor:
     return connection.cursor()
 
 def dbCreateGameTable(con,cur):
