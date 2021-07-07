@@ -11,7 +11,7 @@ import datetime
 #             raise 
 #     return handler
 #, TypeError, sqlite3.DatabaseError, sqlite3.IntegrityError, sqlite3.ProgrammingError, sqlite3.NotSupportedError) as err:
-
+databaseConnections = {}
 #@exception_handler
 def dbConnect(guildList: List[Guild]) -> Dict[int, sqlite3.Connection]:
     connections = {guild.id: sqlite3.connect("data/"+str(guild.id)+".db") for guild in guildList}
