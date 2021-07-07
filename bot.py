@@ -5,7 +5,7 @@ from discord.ext import commands, tasks
 from discord.utils import get
 
 import utils.records as records
-import utils.gameHistory as gameHistory
+import utils.database as database
 import utils.reactionHandler as react
 from utils.messages import verifyMessage, pendingVerify, Verification
 
@@ -40,8 +40,7 @@ async def on_ready():
         f'{bot.guilds}'
         )
     
-    dbConnections = gameHistory.dbConnect(bot.guilds)
-    print(dbConnections)
+    database.databaseConnections = database.dbConnect(bot.guilds)
     for guild in bot.guilds:
         pendingVerify[guild.id] = []
         
@@ -121,7 +120,7 @@ async def addGameVerified(channel, game, name):
 async def addPlayer(ctx):
     commandText = ctx.message.content.split()
     if len(commandText) == 2:
-        gameHistory.dbAddPlayerRecord(ctx.message.mentions[0].id, ctx.message.mentions[0].name)
+        database.dbAddPlayerRecord(ctx.message.mentions[0].id, ctx.message.mentions[0].name)
         await ctx.send(f"Alright, player {ctx.message.mentions[0].name} has been recorded!")
 
 @bot.command()
