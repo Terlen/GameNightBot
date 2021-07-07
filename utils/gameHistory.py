@@ -11,9 +11,12 @@ import datetime
 #, TypeError, sqlite3.DatabaseError, sqlite3.IntegrityError, sqlite3.ProgrammingError, sqlite3.NotSupportedError) as err:
 
 #@exception_handler
-def dbConnect(database: str ='data/gameNight.db') -> sqlite3.Connection:
-    connection = sqlite3.connect(database)
-    return connection
+def dbConnect(guildList: list) -> dict:
+    connections = {guild.id: sqlite3.connect("data/"+str(guild.id)+".db") for guild in guildList}
+
+    #for guild in guildList:
+    #connection = sqlite3.connect(str())
+    return connections
 
 #@exception_handler
 def getCursor(connection: sqlite3.Connection) -> sqlite3.Cursor:

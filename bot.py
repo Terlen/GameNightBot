@@ -4,8 +4,8 @@ import discord
 from discord.ext import commands, tasks
 from discord.utils import get
 
-import data.records as records
-import data.gameHistory as gameHistory
+import utils.records as records
+import utils.gameHistory as gameHistory
 import utils.reactionHandler as react
 from utils.messages import verifyMessage, pendingVerify, Verification
 
@@ -40,9 +40,11 @@ async def on_ready():
         f'{bot.guilds}'
         )
     
-
+    dbConnections = gameHistory.dbConnect(bot.guilds)
+    print(dbConnections)
     for guild in bot.guilds:
         pendingVerify[guild.id] = []
+        
     #members = '\n - '.join([member.name for member in guild.members])
     #print(members)
     #print(f'Guild Members:\n - {members}')
