@@ -1,21 +1,21 @@
 import sqlite3
 import datetime
 
-def exception_handler(function):
-    def handler(*args, **kwargs):
-        try:
-            return function(*args, **kwargs)
-        except (sqlite3.OperationalError, TypeError, sqlite3.DatabaseError, sqlite3.IntegrityError, sqlite3.ProgrammingError, sqlite3.NotSupportedError) as err:
-            return err
-    return handler
+# def databaseExceptionHandler(function):
+#     def handler(*args, **kwargs):
+#         try:
+#             return function(*args, **kwargs)
+#         except sqlite3.OperationalError:
+#             raise 
+#     return handler
+#, TypeError, sqlite3.DatabaseError, sqlite3.IntegrityError, sqlite3.ProgrammingError, sqlite3.NotSupportedError) as err:
 
-
-@exception_handler
+#@exception_handler
 def dbConnect(database: str ='data/gameNight.db') -> sqlite3.Connection:
     connection = sqlite3.connect(database)
     return connection
 
-@exception_handler
+#@exception_handler
 def getCursor(connection: sqlite3.Connection) -> sqlite3.Cursor:
     return connection.cursor()
 
