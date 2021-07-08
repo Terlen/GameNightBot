@@ -15,7 +15,12 @@ class mockCursor:
     def execute(self, *args, **kwargs):
         return self.data
 
+def mock_OperationalError(*args, **kwargs):
+            raise sqlite3.OperationalError("Mock disconnection error")
 
+def mock_addGameIntegrityError(*args, **kwargs):
+            raise sqlite3.IntegrityError("Violation of foreign key requirement")
+    
 class Test_addGame_Unit:
     @pytest.mark.parametrize("test_cur,test_name,test_player, expected", [(mockCursor(), "Pong", "Terlen",None)])
     def test_addGame(self, test_cur, test_name, test_player, expected):
@@ -29,9 +34,7 @@ class Test_addGame_Unit:
         # failure test case
         # input: cursor, game name, player
         # exception: sqlite3.OperationalError
-        def mock_addGameOperationalError(*args, **kwargs):
-            raise sqlite3.OperationalError("Mock disconnection error")
-        monkeypatch.setattr(mockCursor, "execute", mock_addGameOperationalError)
+        monkeypatch.setattr(mockCursor, "execute", mock_OperationalError)
         with pytest.raises(sqlite3.OperationalError):
             assert database.addGame(test_cur, test_name, test_player) == expected
 
@@ -40,23 +43,31 @@ class Test_addGame_Unit:
         # failure test case
         # input: cursor,  game name, player who doesn't yet exist in the players table
         # exception: sqlite3.IntegrityError
-        def mock_addGameIntegrityError(*args, **kwargs):
-            raise sqlite3.IntegrityError("Violation of foreign key requirement")
         monkeypatch.setattr(mockCursor, "execute", mock_addGameIntegrityError)
         with pytest.raises(sqlite3.IntegrityError):
             assert database.addGame(test_cur, test_name, test_player) == expected
 
-class Test_createDatabase_Unit:
+class Test_Unit_dbConnect:
+    
+    def mock_Connect(self,*args, **kwargs):
+       return mockConnection()
+
     # success test case
     # input: guildID: int
-    # output: Tuple[str, ...]
-    @classmethod
-    def mock_Connect(self,*args, **kwargs):
-            return mockConnection(('games','players',))
-
-    def test_createDatabase(self, monkeypatch):
+    # output: sqlite3.Connection
+    @pytest.mark.parametrize("guildID", [(1234)])
+    def test_dbConnect(self, monkeypatch, guildID):
         monkeypatch.setattr(sqlite3, "connect", self.mock_Connect)
-        assert database.createDatabase(1234) == ('games','players',)
+        assert isinstance(database.dbConnect(guildID), mockConnection)
+
+    # failure test case: unexpected disconnect
+    # input: guildID: int
+    # raise sqlite3.OperationalException
+    @pytest.mark.parametrize("guildID", [(1234)])
+    def test_dbConnectOperationalError(self, monkeypatch, guildID):
+        monkeypatch.setattr(sqlite3, "connect", mock_OperationalError)
+        with pytest.raises(sqlite3.OperationalError):
+            assert isinstance(database.dbConnect(guildID), mockConnection)
 
 def test_addPlayer():
     pass
