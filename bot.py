@@ -113,8 +113,23 @@ async def addGame(ctx):
         await ctx.send(f"Invalid command. Make sure you're quoting if there are spaces in the name! (For example: \"The Game of Life\")")
 
 async def addGameVerified(channel, game, name):
-    #gameHistory.dbAddGameRecord(commandText[1],ctx.message.mentions[0].id)
-    await channel.send(f"Alright, {game} was added to our play history! Hope it was a good choice {name}!")
+    dbConnection = database.databaseConnections[channel.guild.id]
+    dbCursor = dbConnection.cursor()
+    try:
+        database.addGame(dbCursor, game, name)
+        dbConnection.commit()
+        await channel.send(f"Alright, {game} was added to our play history! Hope it was a good choice {name}!")
+    except database.sqlite3.OperationalError:
+        dbConnection.rollback()
+        await channel.send(f"There was an error adding the game, please try again later.")
+        raise
+    # If the player isn't in the database yet, foreign key check will fail and raise integrity error
+    except database.sqlite3.IntegrityError:
+        dbConnection.rollback()
+        await channel.send(f"That player isn't in the database yet, please add them first then add this game.")
+
+
+    
     
 @bot.command()
 async def addPlayer(ctx):
