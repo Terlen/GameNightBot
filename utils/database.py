@@ -1,10 +1,27 @@
+from typing import List, Dict
+from discord import Guild
 import sqlite3
 import datetime
 
-def dbConnect():
-    connection = sqlite3.connect('data/gameNight.db')
-    cur = connection.cursor()
-    return connection,cur
+# def databaseExceptionHandler(function):
+#     def handler(*args, **kwargs):
+#         try:
+#             return function(*args, **kwargs)
+#         except sqlite3.OperationalError:
+#             raise 
+#     return handler
+#, TypeError, sqlite3.DatabaseError, sqlite3.IntegrityError, sqlite3.ProgrammingError, sqlite3.NotSupportedError) as err:
+databaseConnections = {}
+#@exception_handler
+def dbConnect(guildList: List[Guild]) -> Dict[int, sqlite3.Connection]:
+    connections = {guild.id: sqlite3.connect("data/"+str(guild.id)+".db") for guild in guildList}
+    #for guild in guildList:
+    #connection = sqlite3.connect(str())
+    return connections
+
+#@exception_handler
+def getCursor(connection: sqlite3.Connection) -> sqlite3.Cursor:
+    return connection.cursor()
 
 def dbCreateGameTable(con,cur):
 # Build game history table
@@ -31,14 +48,11 @@ def dbCreatePlayersTable(con,cur):
     )
     con.commit()
 
-def dbAddGameRecord(game, user):
-    con,cur = dbConnect()
+def addGame(cursor,game, user):
     record = (datetime.datetime.now().isoformat(),game,user)
-    cur.execute(
+    cursor.execute(
         "INSERT INTO games (date_played, game_name, chosen_by) VALUES (?, ?, ?)", record
     )
-    con.commit()
-    con.close()
 
 def dbAddPlayerRecord(userid,name):
     con,cur = dbConnect()
