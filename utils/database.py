@@ -2,16 +2,8 @@ import sqlite3
 import datetime
 from sqlite3.dbapi2 import IntegrityError
 
-# def databaseExceptionHandler(function):
-#     def handler(*args, **kwargs):
-#         try:
-#             return function(*args, **kwargs)
-#         except sqlite3.OperationalError:
-#             raise 
-#     return handler
-#, TypeError, sqlite3.DatabaseError, sqlite3.IntegrityError, sqlite3.ProgrammingError, sqlite3.NotSupportedError) as err:
 databaseConnections = {}
-#@exception_handler
+
 def dbConnect(guildID: int) -> sqlite3.Connection:
     dbPath = 'data/'+str(guildID)+'.db'
     connection = sqlite3.connect(dbPath)
@@ -24,13 +16,6 @@ def initializeDatabase(guildID: int) -> sqlite3.Connection:
     dbCreateGameTable(connection,cursor)
     return connection
   
-
-
-
-#@exception_handler
-def getCursor(connection: sqlite3.Connection) -> sqlite3.Cursor:
-    return connection.cursor()
-
 def dbCreatePlayersTable(connection: sqlite3.Connection, cursor: sqlite3.Cursor) -> None:
     cursor.execute(
         '''CREATE TABLE IF NOT EXISTS players(
@@ -41,7 +26,6 @@ def dbCreatePlayersTable(connection: sqlite3.Connection, cursor: sqlite3.Cursor)
         '''
         )
     
-
 def dbCreateGameTable(connection: sqlite3.Connection, cursor: sqlite3.Cursor) -> None:
     cursor.execute(
         '''CREATE TABLE IF NOT EXISTS games(
@@ -53,8 +37,6 @@ def dbCreateGameTable(connection: sqlite3.Connection, cursor: sqlite3.Cursor) ->
             )
         '''
     )
-
-
 
 def addGame(cursor,game, user):
     record = (datetime.datetime.now().isoformat(),game,user)
