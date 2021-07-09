@@ -42,9 +42,8 @@ def dbCreatePlayersTable(connection: sqlite3.Connection, cursor: sqlite3.Cursor)
         )
     
 
-def dbCreateGameTable(con,cur):
-# Build game history table
-    cur.execute(
+def dbCreateGameTable(connection: sqlite3.Connection, cursor: sqlite3.Cursor) -> None:
+    cursor.execute(
         '''CREATE TABLE IF NOT EXISTS games(
             gameid INTEGER PRIMARY KEY NOT NULL,
             date_played varchar(40) NOT NULL,
