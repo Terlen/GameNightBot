@@ -11,7 +11,7 @@ def dbConnect(guildID: int) -> sqlite3.Connection:
 
 def initializeDatabase(guildID: int) -> sqlite3.Connection:
     connection = dbConnect(guildID)
-    cursor = getCursor(connection)
+    cursor = connection.cursor()
     dbCreatePlayersTable(connection,cursor)
     dbCreateGameTable(connection,cursor)
     return connection
