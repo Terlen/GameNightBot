@@ -99,3 +99,32 @@ class Test_Unit_dbCreatePlayersTable:
         monkeypatch.setattr(cursor, "execute", mock_IntegrityError)
         with pytest.raises(sqlite3.IntegrityError):
             assert database.dbCreatePlayersTable(connection, cursor) is None
+
+class Test_Unit_dbCreateGameTable:
+    connection = mockConnection()
+    cursor = connection.cursor()
+    # Success test case
+    # input: Connection: mockConnection, cursor: mockCursor
+    # output: None
+    @pytest.mark.parametrize("connection, cursor",[(connection, cursor)])
+    def test_dbCreateGameTable(self, monkeypatch, connection, cursor):
+        assert database.dbCreateGameTable(connection, cursor) is None
+    
+    # failure test case
+    # input: Connection: mockConnection, cursor: mockCursor
+    # raise: sqlite3.OperationalError
+    @pytest.mark.parametrize("connection, cursor",[(connection, cursor)])
+    def test_dbCreateGameTable_OperationalError(self, monkeypatch, connection, cursor):
+        monkeypatch.setattr(cursor, "execute", mock_OperationalError)
+        with pytest.raises(sqlite3.OperationalError):
+            assert database.dbCreateGameTable(connection, cursor) is None
+            
+
+    # failure test case
+    # input: Connection: mockConnection, cursor: mockCursor
+    # raise sqlite3.IntegrityError
+    @pytest.mark.parametrize("connection, cursor", [(connection, cursor)])
+    def test_dbCreateGameTable_IntegrityError(self, monkeypatch, connection, cursor):
+        monkeypatch.setattr(cursor, "execute", mock_IntegrityError)
+        with pytest.raises(sqlite3.IntegrityError):
+            assert database.dbCreateGameTable(connection, cursor) is None
