@@ -4,18 +4,11 @@ import pytest
 import utils.database as database
 
 class mockConnection:
-    rollback_called = False
-    commit_called = False
     def __init__(self, data=None):
         self.data = data
     def cursor(self):
         cursor = mockCursor(self, self.data)
         return cursor
-    def commit(self, *args, **kwargs):
-        self.commit_called = True
-        return None
-    def rollback(self, *args, **kwargs):
-        self.rollback_called = True
 
 class mockCursor:
     def __init__(self, parent=mockConnection(), data=None):
@@ -87,8 +80,6 @@ class Test_Unit_dbCreatePlayersTable:
     @pytest.mark.parametrize("connection, cursor",[(connection, cursor)])
     def test_dbCreatePlayersTable(self, monkeypatch, connection, cursor):
         assert database.dbCreatePlayersTable(connection, cursor) is None
-        assert connection.rollback_called == False
-        assert connection.commit_called == True
     
     # failure test case
     # input: Connection: mockConnection, cursor: mockCursor
@@ -98,8 +89,7 @@ class Test_Unit_dbCreatePlayersTable:
         monkeypatch.setattr(cursor, "execute", mock_OperationalError)
         with pytest.raises(sqlite3.OperationalError):
             assert database.dbCreatePlayersTable(connection, cursor) is None
-            assert connection.rollback_called == True
-            assert connection.commit_called == False
+            
 
     # failure test case
     # input: Connection: mockConnection, cursor: mockCursor
@@ -109,5 +99,3 @@ class Test_Unit_dbCreatePlayersTable:
         monkeypatch.setattr(cursor, "execute", mock_IntegrityError)
         with pytest.raises(sqlite3.IntegrityError):
             assert database.dbCreatePlayersTable(connection, cursor) is None
-            assert connection.rollback_called == True
-            assert connection.commit_called == False
