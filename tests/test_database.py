@@ -78,3 +78,36 @@ class Test_Unit_dbConnect:
         with pytest.raises(sqlite3.OperationalError):
             assert isinstance(database.dbConnect(guildID), mockConnection)
 
+class Test_Unit_dbCreatePlayersTable:
+    connection = mockConnection()
+    cursor = connection.cursor()
+    # Success test case
+    # input: Connection: mockConnection, cursor: mockCursor
+    # output: None
+    @pytest.mark.parametrize("connection, cursor",[(connection, cursor)])
+    def test_dbCreatePlayersTable(self, monkeypatch, connection, cursor):
+        assert database.dbCreatePlayersTable(connection, cursor) is None
+        assert connection.rollback_called == False
+        assert connection.commit_called == True
+    
+    # failure test case
+    # input: Connection: mockConnection, cursor: mockCursor
+    # raise: sqlite3.OperationalError
+    @pytest.mark.parametrize("connection, cursor",[(connection, cursor)])
+    def test_dbCreatePlayersTable_OperationalError(self, monkeypatch, connection, cursor):
+        monkeypatch.setattr(cursor, "execute", mock_OperationalError)
+        with pytest.raises(sqlite3.OperationalError):
+            assert database.dbCreatePlayersTable(connection, cursor) is None
+            assert connection.rollback_called == True
+            assert connection.commit_called == False
+
+    # failure test case
+    # input: Connection: mockConnection, cursor: mockCursor
+    # raise sqlite3.IntegrityError
+    @pytest.mark.parametrize("connection, cursor", [(connection, cursor)])
+    def test_dbCreatePlayersTable_IntegrityError(self, monkeypatch, connection, cursor):
+        monkeypatch.setattr(cursor, "execute", mock_IntegrityError)
+        with pytest.raises(sqlite3.IntegrityError):
+            assert database.dbCreatePlayersTable(connection, cursor) is None
+            assert connection.rollback_called == True
+            assert connection.commit_called == False
