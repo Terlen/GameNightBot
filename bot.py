@@ -1,5 +1,4 @@
 import os
-
 import discord
 from discord.ext import commands, tasks
 from discord.utils import get
@@ -40,7 +39,6 @@ async def on_ready():
         f'{bot.guilds}'
         )
     
-    database.databaseConnections = database.dbConnect(bot.guilds)
     for guild in bot.guilds:
         pendingVerify[guild.id] = []
         
@@ -116,16 +114,13 @@ async def addGameVerified(channel, game, name):
     dbConnection = database.databaseConnections[channel.guild.id]
     dbCursor = dbConnection.cursor()
     try:
-        database.addGame(dbCursor, game, name)
-        dbConnection.commit()
-        await channel.send(f"Alright, {game} was added to our play history! Hope it was a good choice {name}!")
+        with dbConnection:
+            database.addGame(dbCursor, game, name)
+            await channel.send(f"Alright, {game} was added to our play history! Hope it was a good choice {name}!")
     except database.sqlite3.OperationalError:
-        dbConnection.rollback()
         await channel.send(f"There was an error adding the game, please try again later.")
-        raise
     # If the player isn't in the database yet, foreign key check will fail and raise integrity error
     except database.sqlite3.IntegrityError:
-        dbConnection.rollback()
         await channel.send(f"That player isn't in the database yet, please add them first then add this game.")
 
 
