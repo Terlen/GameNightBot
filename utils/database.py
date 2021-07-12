@@ -6,7 +6,8 @@ databaseConnections = {}
 
 def dbConnect(guildID: int) -> sqlite3.Connection:
     dbPath = 'data/'+str(guildID)+'.db'
-    connection = sqlite3.connect(dbPath)
+    URI = f'file:{dbPath}?mode=rw'
+    connection = sqlite3.connect(URI, uri=True)
     return connection
 
 def initializeDatabase(guildID: int) -> sqlite3.Connection:
@@ -45,8 +46,8 @@ def addGame(cursor,game, user):
     )
 
 def dbAddPlayerRecord(userid,name):
-    con,cur = dbConnect()
+    con = dbConnect()
     record = (userid,name)
-    cur.execute(
+    con.cursor.execute(
         "INSERT INTO players (discordid, name) VALUES (?, ?)",record
     )
