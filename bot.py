@@ -41,6 +41,10 @@ async def on_ready():
     
     for guild in bot.guilds:
         pendingVerify[guild.id] = []
+        try:
+            database.databaseConnections[guild.id] = database.dbConnect(guild.id)
+        except database.sqlite3.OperationalError:
+            database.databaseConnections[guild.id] = database.initializeDatabase(guild.id)
         
     #members = '\n - '.join([member.name for member in guild.members])
     #print(members)
