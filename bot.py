@@ -117,15 +117,15 @@ async def addGame(ctx):
 async def addGameVerified(channel, game, name):
     dbConnection = database.databaseConnections[channel.guild.id]
     dbCursor = dbConnection.cursor()
-    try:
-        with dbConnection:
+    with dbConnection:
+        try:
             database.addGame(dbCursor, game, name)
             await channel.send(f"Alright, {game} was added to our play history! Hope it was a good choice {name}!")
-    except database.sqlite3.OperationalError:
-        await channel.send(f"There was an error adding the game, please try again later.")
-    # If the player isn't in the database yet, foreign key check will fail and raise integrity error
-    except database.sqlite3.IntegrityError:
-        await channel.send(f"That player isn't in the database yet, please add them first then add this game.")
+        except database.sqlite3.OperationalError:
+            await channel.send(f"There was an error adding the game, please try again later.")
+        # If the player isn't in the database yet, foreign key check will fail and raise integrity error
+        except database.sqlite3.IntegrityError:
+            await channel.send(f"That player isn't in the database yet, please add them first then add this game.")
 
 
     
