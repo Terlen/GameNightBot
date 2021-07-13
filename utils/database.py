@@ -10,10 +10,12 @@ def dbConnect(guildID: int) -> sqlite3.Connection:
     return connection
 
 def initializeDatabase(guildID: int) -> sqlite3.Connection:
-    connection = dbConnect(guildID)
+    dbPath = 'data/'+str(guildID)+'.db'
+    connection = sqlite3.connect(dbPath)
     cursor = connection.cursor()
-    dbCreatePlayersTable(connection,cursor)
-    dbCreateGameTable(connection,cursor)
+    with connection:
+        dbCreatePlayersTable(connection,cursor)
+        dbCreateGameTable(connection,cursor)
     return connection
   
 def dbCreatePlayersTable(connection: sqlite3.Connection, cursor: sqlite3.Cursor) -> None:
@@ -24,7 +26,7 @@ def dbCreatePlayersTable(connection: sqlite3.Connection, cursor: sqlite3.Cursor)
             name varchar(50) NOT NULL
         )
         '''
-        )
+    )
     
 def dbCreateGameTable(connection: sqlite3.Connection, cursor: sqlite3.Cursor) -> None:
     cursor.execute(
