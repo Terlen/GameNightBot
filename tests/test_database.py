@@ -9,6 +9,10 @@ class mockConnection:
     def cursor(self):
         cursor = mockCursor(self, self.data)
         return cursor
+    def rollback(self):
+        pass
+    def commit(self):
+        pass
 
 class mockCursor:
     def __init__(self, parent=mockConnection(), data=None):
