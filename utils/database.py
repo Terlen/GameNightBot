@@ -13,9 +13,13 @@ def initializeDatabase(guildID: int) -> sqlite3.Connection:
     dbPath = 'data/'+str(guildID)+'.db'
     connection = sqlite3.connect(dbPath)
     cursor = connection.cursor()
-    with connection:
+    try:
         dbCreatePlayersTable(connection,cursor)
         dbCreateGameTable(connection,cursor)
+        connection.commit()
+    except:
+        connection.rollback()
+        raise
     return connection
   
 def dbCreatePlayersTable(connection: sqlite3.Connection, cursor: sqlite3.Cursor) -> None:
