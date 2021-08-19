@@ -1,7 +1,7 @@
 from json import dump, load
 import datetime
 
-fileName = 'nextChoice'
+fileName = 'data/nextChoice'
 
 def nextGameNight(gameDay=3):
     today = datetime.date.today()

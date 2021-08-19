@@ -1,5 +1,4 @@
 import os
-
 import discord
 from discord.ext import commands, tasks
 from discord.utils import get
@@ -40,9 +39,12 @@ async def on_ready():
         f'{bot.guilds}'
         )
     
-    database.databaseConnections = database.dbConnect(bot.guilds)
     for guild in bot.guilds:
         pendingVerify[guild.id] = []
+        try:
+            database.databaseConnections[guild.id] = database.dbConnect(guild.id)
+        except database.sqlite3.OperationalError:
+            database.databaseConnections[guild.id] = database.initializeDatabase(guild.id)
         
     #members = '\n - '.join([member.name for member in guild.members])
     #print(members)
@@ -113,14 +115,26 @@ async def addGame(ctx):
         await ctx.send(f"Invalid command. Make sure you're quoting if there are spaces in the name! (For example: \"The Game of Life\")")
 
 async def addGameVerified(channel, game, name):
-    #gameHistory.dbAddGameRecord(commandText[1],ctx.message.mentions[0].id)
-    await channel.send(f"Alright, {game} was added to our play history! Hope it was a good choice {name}!")
+    dbConnection = database.databaseConnections[channel.guild.id]
+    dbCursor = dbConnection.cursor()
+    with dbConnection:
+        try:
+            database.addGame(dbCursor, game, name)
+            await channel.send(f"Alright, {game} was added to our play history! Hope it was a good choice {name}!")
+        except database.sqlite3.OperationalError:
+            await channel.send(f"There was an error adding the game, please try again later.")
+        # If the player isn't in the database yet, foreign key check will fail and raise integrity error
+        except database.sqlite3.IntegrityError:
+            await channel.send(f"That player isn't in the database yet, please add them first then add this game.")
+
+
+    
     
 @bot.command()
 async def addPlayer(ctx):
     commandText = ctx.message.content.split()
     if len(commandText) == 2:
-        database.dbAddPlayerRecord(ctx.message.mentions[0].id, ctx.message.mentions[0].name)
+        database.dbAddPlayerRecord(database.databaseConnections[ctx.message.guild.id], ctx.message.mentions[0].id, ctx.message.mentions[0].name)
         await ctx.send(f"Alright, player {ctx.message.mentions[0].name} has been recorded!")
 
 @bot.command()
