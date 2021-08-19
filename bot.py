@@ -134,7 +134,7 @@ async def addGameVerified(channel, game, name):
 async def addPlayer(ctx):
     commandText = ctx.message.content.split()
     if len(commandText) == 2:
-        database.dbAddPlayerRecord(ctx.message.mentions[0].id, ctx.message.mentions[0].name)
+        database.dbAddPlayerRecord(database.databaseConnections[ctx.message.guild.id], ctx.message.mentions[0].id, ctx.message.mentions[0].name)
         await ctx.send(f"Alright, player {ctx.message.mentions[0].name} has been recorded!")
 
 @bot.command()

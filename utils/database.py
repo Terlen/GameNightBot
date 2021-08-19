@@ -50,9 +50,13 @@ def addGame(cursor,game, user):
         "INSERT INTO games (date_played, game_name, chosen_by) VALUES (?, ?, ?)", record
     )
 
-def dbAddPlayerRecord(userid,name):
-    con = dbConnect()
+def dbAddPlayerRecord(connection:sqlite3.Connection,userid,name):
     record = (userid,name)
-    con.cursor.execute(
-        "INSERT INTO players (discordid, name) VALUES (?, ?)",record
-    )
+    try:
+        connection.cursor.execute(
+            "INSERT INTO players (discordid, name) VALUES (?, ?)",record
+        )
+        connection.commit()
+        print(f'{name} has been added!')
+    except:
+        connection.rollback()
