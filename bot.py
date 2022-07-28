@@ -70,7 +70,7 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
                     elif payload.emoji.name == '\u2705':
                         # verification logic/function
                         #await reactionMessage.channel.send("Yay!")
-                        await addGameVerified(reactionMessage.channel,item.game, item.suggestor.name)
+                        await addGameVerified(reactionMessage.channel,item.game, item.suggestor)
                     break
 
 # Define command to have bot fetch the user who is picking the next game and the date they are picking for.
@@ -114,18 +114,20 @@ async def addGame(ctx):
     else:
         await ctx.send(f"Invalid command. Make sure you're quoting if there are spaces in the name! (For example: \"The Game of Life\")")
 
-async def addGameVerified(channel, game, name):
+async def addGameVerified(channel, game, member):
     dbConnection = database.databaseConnections[channel.guild.id]
     dbCursor = dbConnection.cursor()
     with dbConnection:
         try:
-            database.addGame(dbCursor, game, name)
-            await channel.send(f"Alright, {game} was added to our play history! Hope it was a good choice {name}!")
-        except database.sqlite3.OperationalError:
-            await channel.send(f"There was an error adding the game, please try again later.")
-        # If the player isn't in the database yet, foreign key check will fail and raise integrity error
-        except database.sqlite3.IntegrityError:
-            await channel.send(f"That player isn't in the database yet, please add them first then add this game.")
+            database.addGame(dbCursor, game, member)
+            await channel.send(f"Alright, {game} was added to our play history! Hope it was a good choice {member.name}!")
+        # Foreign key mismatches show up as OperationalErrors instead of Integrity Errors as I expected, so we'll have to handle it here I guess
+        except database.sqlite3.OperationalError as exception:
+            if str(exception).split(' - ')[0] == 'foreign key mismatch':
+                await channel.send(f"{member.name} isn't in the database yet, please add them via !addPlayer first then try again.")
+            else:
+                await channel.send(f"An error occured adding the game to the database, please try again later.")
+            
 
 
     

@@ -7,11 +7,18 @@ def dbConnect(guildID: int) -> sqlite3.Connection:
     dbPath = 'data/'+str(guildID)+'.db'
     URI = f'file:{dbPath}?mode=rw'
     connection = sqlite3.connect(URI, uri=True)
+    enableForeignKeys(connection)
     return connection
+
+def enableForeignKeys(connection:sqlite3.Connection):
+    connection.execute("PRAGMA foreign_keys =ON")
+    connection.commit()
+
 
 def initializeDatabase(guildID: int) -> sqlite3.Connection:
     dbPath = 'data/'+str(guildID)+'.db'
     connection = sqlite3.connect(dbPath)
+    enableForeignKeys(connection)
     cursor = connection.cursor()
     try:
         dbCreatePlayersTable(connection,cursor)
@@ -45,18 +52,24 @@ def dbCreateGameTable(connection: sqlite3.Connection, cursor: sqlite3.Cursor) ->
     )
 
 def addGame(cursor,game, user):
-    record = (datetime.datetime.now().isoformat(),game,user)
+    record = (datetime.datetime.now().isoformat(),game,user.id)
+    print(user.id)
     cursor.execute(
         "INSERT INTO games (date_played, game_name, chosen_by) VALUES (?, ?, ?)", record
     )
 
 def dbAddPlayerRecord(connection:sqlite3.Connection,userid,name):
     record = (userid,name)
+    print(record)
     try:
-        connection.cursor.execute(
+        connection.cursor().execute(
             "INSERT INTO players (discordid, name) VALUES (?, ?)",record
         )
         connection.commit()
         print(f'{name} has been added!')
     except:
+        print("error")
         connection.rollback()
+    
+    connection.cursor().execute("SELECT * FROM players")
+    print(connection.cursor().fetchall())
